@@ -1,0 +1,18 @@
+<aside id="sidebar">
+
+    <header>
+        <h1>Famous movie that you must see</h1>
+    </header>
+
+    {% for movie in selected_movies %}
+        <div id="article-container">
+            <a href="{{ movie.hyperlink }}" >
+                <img src=https://cdn.vox-cdn.com/thumbor/1iHJVraVq_N6D2evYfXMTozYhdM=/0x0:1280x738/1820x1213/filters:focal(538x267:742x471):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/65232906/one_piece.0.png class="img-small">
+            </a>
+            <div id="article-description">
+                <p>{{ movie.title }}, ({{ movie.year }}).</p>
+                <p>{{movie.description}}</p>
+            </div>
+        </div>
+    {% endfor %}
+</aside>

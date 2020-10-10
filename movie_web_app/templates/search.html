@@ -1,0 +1,14 @@
+
+
+<main>
+<div>
+    <form method = 'POST' action = '{{search_url}}'>
+        {{form.csrf_token}}
+        <div>
+            {{form.movie.label}}  {{form.input}}
+        </div>
+        {{form.submit}}
+    </form>
+
+</div>
+</main>
