@@ -26,6 +26,7 @@ class MovieRepo(AbstractRepository):
         self._actor_dict = {}
         self._director_dict = {}
         self._year_dict = {}
+        self._watch_list = []
 
     @property
     def movies_list(self):
@@ -58,6 +59,9 @@ class MovieRepo(AbstractRepository):
     @property
     def genre_dict(self):
         return self.genre_dict
+
+    def get_movie_index(self, new_id):
+        return self._movies_index[new_id]
 
     def add_movie_to_year_dict(self, new_movie: Movie, new_year):
         if new_year in self._year_dict:
@@ -251,6 +255,13 @@ class MovieRepo(AbstractRepository):
 
     def get_comments(self):
         return self._reviews
+
+    def add_to_watch_list(self, movie: Movie):
+        super().add_to_watch_list(movie)
+        self._reviews.append(review)
+
+    def get_watch_list(self):
+        return self._watch_list
 
     def __iter__(self):
         self._current = 0

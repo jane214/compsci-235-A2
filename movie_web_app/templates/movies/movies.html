@@ -35,6 +35,10 @@
                 {% endif %}
             </div>
         </nav>
+<br/>
+      <br/>
+      <br/>
+      <br/>
 
     {% for movie in movies %}
 <!--    <movie id="movie">-->
@@ -53,11 +57,14 @@
             <button class="btn-general" onclick="location.href='{{ genre_urls[genre.name] }}'">{{ genre.name }}</button>
             {% endfor %}
         </div>
+
+
         <div style="float:right">
+                <button class="btn-general" onclick="location.href='{{ movie.add_to_watch_list_url }}'">   &#9825 add   </button>
             {% if movie.comments|length > 0 and movie.id != show_comments_for_movies %}
-                <button class="btn-general" onclick="location.href='{{ movie.view_comment_url }}'">{{ movie.comments|length }} comments</button>
+                <button class="btn-general" onclick="location.href='{{ movie.view_comment_url }}'">{{ movie.comments|length }} &#x1f4ac comments</button>
             {% endif %}
-            <button class="btn-general" onclick="location.href='{{ movie.add_comment_url }}'">Comment</button>
+            <button class="btn-general" onclick="location.href='{{ movie.add_comment_url }}'">&#x1f4ac Comment</button>
         </div>
         {% if movie.id == show_comments_for_movies %}
         <div style="clear:both">
@@ -81,6 +88,13 @@
 
         </div>
         {% endif %}
+        <br/>
+              <br/>
+        <hr/>
+        <hr/>
+              <br/>
+              <br/>
+              <br/>
     </article>
     {% endfor %}
 

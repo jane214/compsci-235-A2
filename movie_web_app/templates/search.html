@@ -1,14 +1,20 @@
+{% extends 'layout.html' %}
 
-
-<main>
+{% block content %}
+<main id = "main">
 <div>
     <form method = 'POST' action = '{{search_url}}'>
         {{form.csrf_token}}
         <div>
-            {{form.movie.label}}  {{form.input}}
+
+            {{form.search_info.label}}
+
+            {{form.search_info(size = 100, placeholder="type search information.....", class="textarea", cols="50", rows="3", wrap="hard")}}
+                    {{form.submit}}
         </div>
-        {{form.submit}}
+
     </form>
 
 </div>
 </main>
+{% endblock %}

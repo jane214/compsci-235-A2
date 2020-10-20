@@ -25,16 +25,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
   <body>
-  <header>
-       <table id="logoAndTitle">
-          <tr>hi</tr>
-          <tr>you</tr>
-          <tr>are the best</tr>
-        </table>
-  </header>
     <div id="body">
-      <div id="content-2">
+      <!-- Include navigation partial. -->
+      {% include 'navigation.html' %}
 
+      <div id="content-2">
         <!-- Include header partial. -->
         {% include 'header.html' %}
 
@@ -50,3 +45,4 @@
     </div>
   </body>
 </html>
+

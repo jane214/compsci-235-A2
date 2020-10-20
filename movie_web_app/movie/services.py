@@ -1,7 +1,7 @@
 from typing import List, Iterable
 
 from movie_web_app.adapters.repository import AbstractRepository
-from movie_web_app.domainmodel.model import make_review, Movie, Review, Genre
+from movie_web_app.domainmodel.model import make_review, Movie, Review, Genre, Actor, Director
 
 
 class NonExistentMovieException(Exception):
@@ -29,6 +29,19 @@ def add_comment(movie_id: int, comment_text: str, username: str, repo: AbstractR
     repo.add_comment(comment)
 
 
+def add_to_watch_list(movie_id: int, username: str, repo: AbstractRepository):
+    # Check that the movie exists.
+    movie = repo.get_movie(int(movie_id))
+    user = repo.get_user(username)
+    if movie is None:
+        raise NonExistentMovieException
+
+    user = repo.get_user(username)
+    if user is None:
+        raise UnknownUserException
+    repo.add_to_watch_list(movie)
+
+
 def get_movie(movie_id: int, repo: AbstractRepository):
     movie = repo.get_movie(int(movie_id))
 
@@ -39,14 +52,12 @@ def get_movie(movie_id: int, repo: AbstractRepository):
 
 
 def get_first_movie(repo: AbstractRepository):
-
     movie = repo.get_first_movie()
 
     return movie_to_dict(movie)
 
 
 def get_last_movie(repo: AbstractRepository):
-
     movie = repo.get_last_movie()
     return movie_to_dict(movie)
 
@@ -85,6 +96,17 @@ def get_movies_by_id(id_list, repo: AbstractRepository):
     return movies_as_dict
 
 
+def get_search_info(actor: Actor, genre: Genre, director: Director, repo: AbstractRepository):
+    movies = repo.get_movies_by_actor(actor)
+    movies_ids = repo.get_movie_ids_for_genre(genre.genre_name)
+    for id in movies_ids:
+        movies.append(repo.get_movie_index(id))
+    movies += repo.get_movies_by_director(director)
+    movies = set(movies)
+    movies = list(movies)
+    return movies_to_dict(movies)
+
+
 def get_comments_for_movie(movie_id, repo: AbstractRepository):
     movie = repo.get_movie(movie_id)
 
@@ -92,6 +114,15 @@ def get_comments_for_movie(movie_id, repo: AbstractRepository):
         raise NonExistentMovieException
 
     return comments_to_dict(movie.reviews)
+
+
+def get_watch_list_for_movie(movie_id, repo: AbstractRepository):
+    movie = repo.get_movie(movie_id)
+
+    if movie is None:
+        raise NonExistentMovieException
+
+    return watch_list_to_dict(movie.watch_list)
 
 
 # ============================================
@@ -107,7 +138,9 @@ def movie_to_dict(movie: Movie):
         'hyperlink': None,
         'image_hyperlink': None,
         'comments': comments_to_dict(movie.reviews),
-        'genres': genres_to_dict(movie.genres)
+        'genres': genres_to_dict(movie.genres),
+        'vote': movie.votes,
+        'rate': movie.rating
     }
     return movie_dict
 

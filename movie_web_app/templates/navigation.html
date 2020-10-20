@@ -9,6 +9,8 @@
   <a class="btn-nav" href="{{ url_for('authentication_bp.register') }}">Register</a>
   <a class="btn-nav" href="{{ url_for('authentication_bp.login') }}">Login</a>
   <a class="btn-nav" href="{{ url_for('authentication_bp.logout') }}">Logout</a>
+{#  <a class="btn-nav" href="{{ url_for('movies_bp.watching_list') }}">watching_list</a>#}
+  <a class="btn-nav" href="{{ url_for('movies_bp.search_movies') }}">search movies</a>
   <div>
     <h3>
       <a class="btn-nav" href="{{ url_for('movies_bp.movies_by_date') }}">
@@ -18,10 +20,9 @@
   </div>
 
   <div>
-    <h3 id="sub-nav-header">Browse by genre</h3>
-    {% for key in genre_urls %}
-      <a class="btn-nav" href="{{ genre_urls[key] }}">{{ key }}</a>
-    {% endfor %}
+    <h3 >
+        <a class="btn-nav" href="{{ url_for('movies_bp.search_by_genre') }}"> Browse by genre</a>
+    </h3>
 
   </div>
 

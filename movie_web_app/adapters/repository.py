@@ -19,6 +19,10 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_movie_index(self, new_id: int):
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_user(self, username) -> User:
         """ Returns the User named username from the repository.
 
@@ -162,6 +166,19 @@ class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def get_comments(self):
         """ Returns the Comments stored in the repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_to_watch_list(self, movie: Movie):
+        """ Adds a Comment to the repository.
+
+        If the Comment doesn't have bidirectional links with an Article and a User, this method raises a
+        RepositoryException and doesn't update the repository.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_watch_list(self):
         raise NotImplementedError
 
     @abc.abstractmethod
