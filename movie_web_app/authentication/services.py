@@ -55,6 +55,7 @@ def authenticate_user(username: str, password: str, repo: AbstractRepository):
 def user_to_dict(user: User):
     user_dict = {
         'username': user.user_name,
-        'password': user.password
+        'password': user.password,
+        'watch_list': user.watch_list
     }
     return user_dict

@@ -1,7 +1,7 @@
 from typing import List, Iterable
 
 from movie_web_app.adapters.repository import AbstractRepository
-from movie_web_app.domainmodel.model import make_review, Movie, Review, Genre, Actor, Director
+from movie_web_app.domainmodel.model import make_review, Movie, Review, Genre, Actor, Director, User
 
 
 class NonExistentMovieException(Exception):
@@ -39,7 +39,7 @@ def add_to_watch_list(movie_id: int, username: str, repo: AbstractRepository):
     user = repo.get_user(username)
     if user is None:
         raise UnknownUserException
-    repo.add_to_watch_list(movie)
+    repo.add_to_watch_list(user, movie)
 
 
 def get_movie(movie_id: int, repo: AbstractRepository):
@@ -60,6 +60,13 @@ def get_first_movie(repo: AbstractRepository):
 def get_last_movie(repo: AbstractRepository):
     movie = repo.get_last_movie()
     return movie_to_dict(movie)
+
+
+def get_user(username: str, repo: AbstractRepository):
+    user = repo.get_user(username)
+    if user is None:
+        return None
+    return user_to_dict(user)
 
 
 def get_movies_by_year(year, repo: AbstractRepository):
@@ -116,13 +123,11 @@ def get_comments_for_movie(movie_id, repo: AbstractRepository):
     return comments_to_dict(movie.reviews)
 
 
-def get_watch_list_for_movie(movie_id, repo: AbstractRepository):
-    movie = repo.get_movie(movie_id)
-
-    if movie is None:
-        raise NonExistentMovieException
-
-    return watch_list_to_dict(movie.watch_list)
+def get_watch_list_for_user(username, repo: AbstractRepository):
+    user = repo.get_user(username)
+    if user is None:
+        raise UnknownUserException
+    return movies_to_dict(user.watch_list)
 
 
 # ============================================
@@ -159,6 +164,15 @@ def comment_to_dict(comment: Review):
     return comment_dict
 
 
+def user_to_dict(user: User):
+    user_dict = {
+        'username': user.user_name,
+        'password': user.password,
+        'watch_list': user.watch_list
+    }
+    return user_dict
+
+
 def comments_to_dict(comments: Iterable[Review]):
     return [comment_to_dict(comment) for comment in comments]
 
@@ -185,3 +199,5 @@ def dict_to_movies(dict):
     movie.hyperlink = dict.hyperlink
     # Note there's no comments or tags.
     return movie
+
+

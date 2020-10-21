@@ -60,7 +60,12 @@
 
 
         <div style="float:right">
+                {% if movie.add_to_watch_list_url is not none %}
                 <button class="btn-general" onclick="location.href='{{ movie.add_to_watch_list_url }}'">   &#9825 add   </button>
+                {% else %}
+                <button class="btn-general" disabled>   &#128420 added   </button>
+                {% endif %}
+
             {% if movie.comments|length > 0 and movie.id != show_comments_for_movies %}
                 <button class="btn-general" onclick="location.href='{{ movie.view_comment_url }}'">{{ movie.comments|length }} &#x1f4ac comments</button>
             {% endif %}

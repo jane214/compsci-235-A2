@@ -169,7 +169,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_to_watch_list(self, movie: Movie):
+    def add_to_watch_list(self, user: User, movie: Movie):
         """ Adds a Comment to the repository.
 
         If the Comment doesn't have bidirectional links with an Article and a User, this method raises a

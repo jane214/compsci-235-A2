@@ -446,14 +446,23 @@ class User:
 class WatchList:
     def __init__(self):
         self.__watchlist: List[Movie] = []
+        self.__user = None
 
     @property
     def watch_list(self):
         return self.__watchlist
 
+    @property
+    def user(self):
+        return self.__user
+
     @watch_list.setter
     def watch_list(self, new_list: list):
         self.__watchlist = new_list
+
+    @user.setter
+    def user(self, new_user: User):
+        self.__user = new_user
 
     def add_movie(self, movie: Movie):
         if isinstance(movie, Movie):

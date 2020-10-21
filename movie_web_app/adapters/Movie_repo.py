@@ -256,9 +256,9 @@ class MovieRepo(AbstractRepository):
     def get_comments(self):
         return self._reviews
 
-    def add_to_watch_list(self, movie: Movie):
-        super().add_to_watch_list(movie)
-        self._reviews.append(review)
+    def add_to_watch_list(self, user: User, movie: Movie):
+        # super().add_to_watch_list(user, movie)
+        user.add_watch_list(movie)
 
     def get_watch_list(self):
         return self._watch_list
