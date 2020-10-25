@@ -11,8 +11,12 @@
 <!--        <a href="{{movie.hyperlink}}" target="_blank">-->
 <!--            <img src={{movie.image_hyperlink}} alt="movie image">-->
 <!--        </a>-->
+        <br>
+        <br>
         <h2>{{movie.title}}</h2>
+        <br>
         <p>{{movie.description}}</p>
+        <br>
         <div style="float:left">
             {% for genre in movie.genres %}
             <button class="btn-general-disabled" disable>{{ genre.name }}</button>
