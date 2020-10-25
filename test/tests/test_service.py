@@ -3,9 +3,10 @@ from datetime import date
 import pytest
 
 from movie_web_app.authentication.services import AuthenticationException
+from movie_web_app.domainmodel.model import Movie
 from movie_web_app.movie import services as movie_services
 from movie_web_app.authentication import services as auth_services
-from movie_web_app.movie.services import NonExistentMovieException
+from movie_web_app.movie.services import NonExistentMovieException, UnknownUserException
 
 
 def test_can_add_user(in_memory_repo):
@@ -196,3 +197,26 @@ def test_get_comments_for_movie_without_comments(in_memory_repo):
     comments_as_dict = movie_services.get_comments_for_movie(2, in_memory_repo)
     assert len(comments_as_dict) == 0
 
+
+def test_can_add_or_remove_movie_to_from_watch_list(in_memory_repo):
+    movie_id = 3
+    username = 'fmercury'
+    # Call the service layer to add the comment.
+    movie_services.add_to_watch_list(movie_id, username, in_memory_repo)
+    watch_list = movie_services.get_watch_list_for_user(username, in_memory_repo)
+
+    assert watch_list[0]['id'] == 3
+    movie_services.remove_from_watch_list(movie_id, username, in_memory_repo)
+    watch_list = movie_services.get_watch_list_for_user(username, in_memory_repo)
+    assert len(watch_list) == 0
+
+
+def test_can_add_or_remove_movie_to_from_watch_listif_user_is_none(in_memory_repo):
+    movie_id = 3
+    username = None
+    # Call the service layer to add the comment.
+    with pytest.raises(UnknownUserException):
+        movie_services.add_to_watch_list(movie_id, username, in_memory_repo)
+
+    with pytest.raises(UnknownUserException):
+        movie_services.remove_from_watch_list(movie_id, username, in_memory_repo)

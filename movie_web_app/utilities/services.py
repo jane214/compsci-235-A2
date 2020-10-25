@@ -11,6 +11,12 @@ def get_genre_names(repo: AbstractRepository):
     return genre_name
 
 
+def get_years(repo: AbstractRepository):
+    years = repo.get_year_list()
+    year_list = [year for year in years]
+    return year_list
+
+
 def get_random_movies(quantity, repo: AbstractRepository):
     movie_count = repo.get_number_of_movies()
 

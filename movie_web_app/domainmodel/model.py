@@ -94,7 +94,7 @@ class Director:
 
 
 class Movie:
-    def __init__(self, movie_name, release_year=None, new_id=None, hyperlink = None):
+    def __init__(self, movie_name, release_year=None, new_id=None, hyperlink=None):
         if movie_name == "" or type(movie_name) is not str:
             self.__movie_name = None
         else:
@@ -261,7 +261,7 @@ class Movie:
         if isinstance(new_genre, Genre) and new_genre in self._genres and (len(self._genres) > 0):
             self._genres.remove(new_genre)
 
-    def is_genred_by(self, genre: 'Genre' ):
+    def is_genred_by(self, genre: 'Genre'):
         return genre in self._genres
 
 
@@ -442,6 +442,10 @@ class User:
         if isinstance(new_movie, Movie):
             self._watch_list.add_movie(new_movie)
 
+    def remove_watch_list(self, new_movie: Movie):
+        if isinstance(new_movie, Movie):
+            self._watch_list.remove_movie(new_movie)
+
 
 class WatchList:
     def __init__(self):
@@ -504,10 +508,9 @@ class WatchList:
 
 
 def make_review(comment_text: str, user: User, movie: Movie, timestamp: datetime = datetime.today()):
-    comment = Review(movie, comment_text, -1 , user)
+    comment = Review(movie, comment_text, -1, user)
     comment.timestamp = timestamp
     user.add_review(comment)
     movie.add_review(comment)
 
     return comment
-

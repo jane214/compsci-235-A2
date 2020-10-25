@@ -20,10 +20,10 @@ def test_register(client):
         ('', '', b'Your username is required'),
         ('cj', '', b'Your username is too short'),
         ('test', '', b'Your password is required'),
-        ('test', 'test', b'Your password must at least 8 characters, and contain an upper case letter, a lower case letter and a digit'),
+        ('test', 'test',
+         b'Your password must at least 8 characters, and contain an upper case letter, a lower case letter and a digit'),
         ('fmercury', 'Test#6^0', b'Your username is already taken - please supply another'),
 ))
-
 def test_register_with_invalid_input(client, username, password, message):
     # Check that attempting to register with invalid combinations of username and password generate appropriate error
     # messages.
@@ -90,7 +90,6 @@ def test_comment(client, auth):
         ('Hey', (b'Your comment is too short')),
         ('ass', (b'Your comment is too short', b'Your comment must not contain profanity')),
 ))
-
 def test_comment_with_invalid_input(client, auth, comment, messages):
     # Login a user.
     auth.login()
@@ -112,7 +111,7 @@ def test_movies_without_date(client):
 
     # Check that without providing a date query parameter the page includes the first article.
     assert b'2006' in response.data
-    assert b'Inland Empire' in response.data
+    assert b'The Prestige' in response.data
 
 
 def test_articles_with_date(client):
@@ -122,7 +121,7 @@ def test_articles_with_date(client):
 
     # Check that all movies on the requested date are included on the page.
     assert b'2006' in response.data
-    assert b'Inland Empire' in response.data
+    assert b'The Prestige' in response.data
 
 
 def test_movies_with_comment(client):
@@ -136,9 +135,20 @@ def test_movies_with_comment(client):
 
 
 def test_movies_with_genre(client):
-    # Check that we can retrieve the articles page.
     response = client.get('/movies_by_genre?genre=Sci-Fi')
     assert response.status_code == 200
 
-    # assert b'Coronavirus: First case of virus in New Zealand' in response.data
-    # assert b'Covid 19 coronavirus: US deaths double in two days, Trump says quarantine not necessary' in response.data
+
+def test_movies_can_show_watch_list(client):
+    response = client.get('/show_watchlist')
+    assert response.status_code == 302
+
+
+def test_login_required_to_watch_list_dates(client):
+    response = client.get('/watch_list_dates')
+    assert response.headers['Location'] == 'http://localhost/authentication/login'
+
+
+def test_login_required_to_watch_list_genre(client):
+    response = client.get('/watch_list_genres')
+    assert response.headers['Location'] == 'http://localhost/authentication/login'

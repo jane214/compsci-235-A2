@@ -136,7 +136,7 @@ def test_repository_returns_an_empty_list_for_non_existent_ids(in_memory_repo):
 def test_repository_returns_movie_ids_for_existing_genre(in_memory_repo):
     article_ids = in_memory_repo.get_movie_ids_for_genre('War')
 
-    assert article_ids == [78, 114, 161, 187, 231, 241, 480, 511, 644, 714, 763, 821, 895]
+    assert article_ids == [78, 231, 714, 511, 114, 241, 644, 763, 895, 821, 480, 187, 161]
 
 
 def test_repository_returns_an_empty_list_for_non_existent_genre(in_memory_repo):
@@ -217,5 +217,12 @@ def test_repository_does_not_add_a_comment_without_an_movie_properly_attached(in
         in_memory_repo.add_comment(comment)
 
 
-def test_repository_can_retrieve_comments(in_memory_repo):
-    assert len(in_memory_repo.get_comments()) == 3
+def test_repository_can_add_or_remove_movie_to_or_from_watch_list(in_memory_repo):
+    user = in_memory_repo.get_user('fmercury')
+    movie = Movie("Hello")
+    in_memory_repo.add_to_watch_list(user, movie)
+    assert len(user.watch_list.watch_list) == 1
+    assert user.watch_list.watch_list[0].title == "Hello"
+    in_memory_repo.remove_from_watch_list(user, movie)
+    assert len(user.watch_list.watch_list) == 0
+

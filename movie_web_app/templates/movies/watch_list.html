@@ -45,13 +45,7 @@
 <!--        <a href="{{movie.hyperlink}}" target="_blank">-->
 <!--            <img src={{movie.image_hyperlink}} alt="movie image">-->
 <!--        </a>-->
-    <hr>
-    <br>
         <h2>{{movie.title}}</h2>
-    <br>
-    <hr>
-    <br>
-        <h3 style="float:right">Rating {{movie.rate}}</h3>
     <br/>
     <br/>
         <p>{{movie.description}}</p>
@@ -66,13 +60,7 @@
 
 
         <div style="float:right">
-                {% if movie.add_to_watch_list_url is not none %}
-                    {% if movie.id not in id_list %}
-                        <button class="btn-general" onclick="location.href='{{ movie.add_to_watch_list_url }}'">   &#9825 add   </button>
-                    {% else %}
-                        <button class="btn-general" onclick="location.href='{{ movie.remove_from_watch_list_url }}'">   &#10062 remove   </button>
-                    {% endif %}
-                {% endif %}
+                <button class="btn-general" onclick="location.href='{{ movie.remove_from_watch_list_url }}'">  &#10062 remove  </button>
 
             {% if movie.comments|length > 0 and movie.id != show_comments_for_movies %}
                 <button class="btn-general" onclick="location.href='{{ movie.view_comment_url }}'">{{ movie.comments|length }} &#x1f4ac comments</button>
@@ -89,11 +77,11 @@
             <h3>Comments for {{movie.title}}</h3>
             <hr>
             <br/>
-            <ul>
+
                 {% for comment in movie.comments %}
-                <li>{{comment.comment_text}},  by {{comment.username}}, {{comment.timestamp}}</li>
+                <p>{{comment.comment_text}}, by {{comment.username}}, {{comment.timestamp}}</p>
                 {% endfor %}
-            </ul>
+
             <br/>
             <hr>
             <hr>

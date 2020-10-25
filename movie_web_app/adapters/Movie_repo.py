@@ -16,7 +16,7 @@ class MovieRepo(AbstractRepository):
 
     def __init__(self):
         self._movies_index = {}
-        self._movies = []
+        self._movies: List[Movie] = []
         self._actors = []
         self._genres = []
         self._reviews = []
@@ -59,6 +59,9 @@ class MovieRepo(AbstractRepository):
     @property
     def genre_dict(self):
         return self.genre_dict
+
+    def remove_from_watch_list(self, user: User, movie: Movie):
+        user.watch_list.remove_movie(movie)
 
     def get_movie_index(self, new_id):
         return self._movies_index[new_id]
@@ -115,6 +118,11 @@ class MovieRepo(AbstractRepository):
 
     def get_genre_list(self) -> List[Genre]:
         return self._genres
+
+    def get_year_list(self) -> List[int]:
+        year_list = list(self._year_dict.keys())
+        year_list.sort()
+        return year_list
 
     def get_genre_dict(self):
         return self._genre_dict
@@ -212,7 +220,23 @@ class MovieRepo(AbstractRepository):
 
         # Retrieve the ids of articles associated with the Tag.
         if genre is not None:
-            movie_ids = [movie.id for movie in self._genre_dict[genre]]
+            list1 = self._genre_dict[genre]
+            list1.sort(key=lambda movie: movie.rating, reverse=True)
+            movie_ids = [movie.id for movie in list1]
+        else:
+            # No Tag with name tag_name, so return an empty list.
+            movie_ids = list()
+
+        return movie_ids
+
+    def get_movie_ids_for_year(self, new_year):
+        year = next((year for year in self._year_dict if year == new_year), None)
+
+        # Retrieve the ids of articles associated with the Tag.
+        if year is not None:
+            list1 = self._year_dict[year]
+            list1.sort(key=lambda movie: movie.rating, reverse=True)
+            movie_ids = [movie.id for movie in list1]
         else:
             # No Tag with name tag_name, so return an empty list.
             movie_ids = list()
@@ -240,7 +264,7 @@ class MovieRepo(AbstractRepository):
         year_list.sort()
         position = year_list.index(movie.year)
         try:
-            index = position+1
+            index = position + 1
             if index < len(year_list):
                 next_year = year_list[index]
         except ValueError:
@@ -280,6 +304,51 @@ class MovieRepo(AbstractRepository):
         if index != len(self._movies) and self._movies[index].year == movie.year:
             return index
         raise ValueError
+
+    def get_movies(self, movie_name):
+        movie_list = []
+        movie_name = movie_name.lower()
+        for movie in self._movies:
+            pattern = movie.title.lower()
+            if movie_name == pattern:
+                movie_list.append(movie)
+        return movie_list
+
+    def get_movies_for_actor(self, name):
+        name = name.lower()
+        match_list = []
+        result = None
+        for actor in self._actors:
+            pattern = actor.actor_full_name.lower()
+            if name == pattern:
+                result = actor
+        if result is not None:
+            match_list = self._actor_dict[result]
+        return match_list
+
+    def get_movies_for_genre(self, name):
+        name = name.lower()
+        match_list = []
+        result = None
+        for genre in self._genres:
+            pattern = genre.genre_name.lower()
+            if name == pattern:
+                result = genre
+        if result is not None:
+            match_list = self._genre_dict[result]
+        return match_list
+
+    def get_movies_for_director(self, name):
+        name = name.lower()
+        match_list = []
+        result = None
+        for director in self._director:
+            pattern = director.director_full_name.lower()
+            if name == pattern:
+                result = director
+        if result is not None:
+            match_list = self._director_dict[result]
+        return match_list
 
 
 def new_load_movie_actor_and_genre(data_path, repo: MovieRepo):
@@ -322,28 +391,6 @@ def new_load_movie_actor_and_genre(data_path, repo: MovieRepo):
             repo.add_movie_to_director_dict(movie, director)
             repo.add_director(director)
 
-#
-# def load_movies(data_path, repo: MovieRepo):
-#     filename = os.path.join(data_path, "Data1000Movies.csv")
-#     movie_file = MovieFileCSVReader(filename)
-#     movie_file.read_csv_file()
-#     movie_list = movie_file.dataset_of_movies
-#     actor_set = movie_file.dataset_of_actors
-#     genre_set = movie_file.dataset_of_genres
-#     genre_dict = movie_file.genres_dict
-#     director_dict = movie_file.director_dict
-#     actor_dict = movie_file.actor_dict
-#     directors_set = movie_file.dataset_of_directors
-#     for movie in movie_list:
-#         repo.add_movie(movie)
-#     for genre in genre_set:
-#         repo.add_genre(genre)
-#     repo.set_actors(list(actor_set))
-#     repo._genre_dict = genre_dict
-#     repo.set_directors(list(directors_set))
-#     repo._director_dict = director_dict
-#     repo._actor_dict = actor_dict
-
 
 def read_csv_file(filename: str):
     with open(filename, encoding='utf-8-sig') as infile:
@@ -362,7 +409,6 @@ def read_csv_file(filename: str):
 def load_users(data_path: str, repo: MovieRepo):
     users = dict()
     filename = os.path.join(data_path, "users.csv")
-    # 'C:Users/zhong/Desktop/compsci-235-A2/movie_web_app/datafilereaders/users.csv'
     for data_row in read_csv_file(filename):
         user = User(
             name=data_row[1],
@@ -396,56 +442,3 @@ def populate(data_path, repo: MovieRepo):
 
     # set up comments info
     load_comments(data_path, repo, users)
-
-
-# repo = MovieRepo()
-# new_load_movie_actor_and_genre("C:/Users/zhong/Desktop/compsci-235-A2/movie_web_app/datafilereaders", repo)
-# user = User("Jane", "12345")
-# print(user.user_name)
-# repo.add_user(user)
-# users = load_users("C:/Users/zhong/Desktop/compsci-235-A2/movie_web_app/datafilereaders", repo)
-# load_comments("C:/Users/zhong/Desktop/compsci-235-A2/movie_web_app/datafilereaders", repo, users)
-# for comment in repo._reviews:
-#     print(comment.review_text, comment.movie)
-#
-# for review in repo._movies_index[1].genres:
-#     print(review.genre_name)
-
-# for key in repo._movies_index:
-#     print(key, repo._movies_index[key])
-# print(repo._movies_index[100])
-# movie = repo._movies_index[100]
-# year = repo.get_year_of_next_movie(movie)
-# print(year)
-# print(0)
-# keys = list(repo.year_dict.keys())
-# keys.sort()
-# for key in keys:
-#     print(key, repo.year_dict[key])
-
-# year_list = list(repo._year_dict.keys())
-# year_list.sort()
-# movie = repo.year_dict[year_list[1]][0]
-# movie = repo.get_movie(movie.id)
-# movie = repo.get_year_of_previous_movie(movie)
-# print(movie)
-# movie = repo.get_first_movie()
-# print(movie.year, movie.genres)
-# for movie in repo.movies_list:
-#     print(movie)
-
-# number = repo.get_movie(1)
-# print(number)
-# populate("C:/Users/zhong/Desktop/compsci-235-A2/movie_web_app/datafilereaders", repo)
-# for movie in repo:
-#     print(movie)
-
-# user = User("Jane", "12345")
-# print(user.user_name)
-# repo.add_user(user)
-# print(repo.users)
-# new_u = repo.get_user(user.user_name)
-# print(new_u)
-# user = User("Ja", "3465615")
-# repo.add_user(user)
-# print(repo.users)

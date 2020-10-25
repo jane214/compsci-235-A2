@@ -32,14 +32,14 @@ def add_comment(movie_id: int, comment_text: str, username: str, repo: AbstractR
 def add_to_watch_list(movie_id: int, username: str, repo: AbstractRepository):
     # Check that the movie exists.
     movie = repo.get_movie(int(movie_id))
-    user = repo.get_user(username)
     if movie is None:
         raise NonExistentMovieException
 
     user = repo.get_user(username)
     if user is None:
         raise UnknownUserException
-    repo.add_to_watch_list(user, movie)
+    if movie not in user.watch_list:
+        repo.add_to_watch_list(user, movie)
 
 
 def get_movie(movie_id: int, repo: AbstractRepository):
@@ -74,7 +74,7 @@ def get_movies_by_year(year, repo: AbstractRepository):
     # the date of the next movie (might be null)
 
     movies = repo.get_movies_by_year(target_year=int(year))
-
+    movies.sort(key=lambda movie: movie.rating, reverse=True)
     movies_dto = list()
     prev_year = next_year = None
 
@@ -88,10 +88,27 @@ def get_movies_by_year(year, repo: AbstractRepository):
     return movies_dto, prev_year, next_year
 
 
+def get_movie_ids_for_year(year, repo: AbstractRepository):
+    movie_ids = repo.get_movie_ids_for_year(year)
+
+    return movie_ids
+
+
 def get_movie_ids_for_genre(genre_name, repo: AbstractRepository):
     movie_ids = repo.get_movie_ids_for_genre(genre_name)
 
     return movie_ids
+
+
+def remove_from_watch_list(movie_id, username, repo: AbstractRepository):
+    # Check that the movie exists.
+    movie = repo.get_movie(int(movie_id))
+    if movie is None:
+        raise NonExistentMovieException
+    user = repo.get_user(username)
+    if user is None:
+        raise UnknownUserException
+    repo.remove_from_watch_list(user, movie)
 
 
 def get_movies_by_id(id_list, repo: AbstractRepository):
@@ -103,14 +120,14 @@ def get_movies_by_id(id_list, repo: AbstractRepository):
     return movies_as_dict
 
 
-def get_search_info(actor: Actor, genre: Genre, director: Director, repo: AbstractRepository):
-    movies = repo.get_movies_by_actor(actor)
-    movies_ids = repo.get_movie_ids_for_genre(genre.genre_name)
-    for id in movies_ids:
-        movies.append(repo.get_movie_index(id))
-    movies += repo.get_movies_by_director(director)
+def get_search_info(name, repo: AbstractRepository):
+    movies = repo.get_movies_for_actor(name)
+    movies += repo.get_movies(name)
+    movies += repo.get_movies_for_genre(name)
+    movies += repo.get_movies_for_director(name)
     movies = set(movies)
     movies = list(movies)
+    movies.sort(key=lambda movie: movie.rating, reverse=True)
     return movies_to_dict(movies)
 
 
@@ -127,6 +144,7 @@ def get_watch_list_for_user(username, repo: AbstractRepository):
     user = repo.get_user(username)
     if user is None:
         raise UnknownUserException
+    user.watch_list.watch_list.sort(key=lambda movie:movie.rating, reverse=True)
     return movies_to_dict(user.watch_list)
 
 
@@ -168,7 +186,7 @@ def user_to_dict(user: User):
     user_dict = {
         'username': user.user_name,
         'password': user.password,
-        'watch_list': user.watch_list
+        'watch_list': user.watch_list.watch_list
     }
     return user_dict
 
@@ -199,5 +217,3 @@ def dict_to_movies(dict):
     movie.hyperlink = dict.hyperlink
     # Note there's no comments or tags.
     return movie
-
-

@@ -77,6 +77,10 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_year_list(self) -> List[int]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_genre_dict(self):
         raise NotImplementedError
 
@@ -169,16 +173,39 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_to_watch_list(self, user: User, movie: Movie):
-        """ Adds a Comment to the repository.
+    def get_movies(self, movie_name):
+        """ Returns the Comments stored in the repository. """
+        raise NotImplementedError
 
-        If the Comment doesn't have bidirectional links with an Article and a User, this method raises a
-        RepositoryException and doesn't update the repository.
-        """
+    @abc.abstractmethod
+    def get_movies_for_actor(self, name):
+        """ Returns the Comments stored in the repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movies_for_genre(self, name):
+        """ Returns the Comments stored in the repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movies_for_director(self, name):
+        """ Returns the Comments stored in the repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_to_watch_list(self, user: User, movie: Movie):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def remove_from_watch_list(self, user: User, movie: Movie):
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_watch_list(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movie_ids_for_year(self, year):
         raise NotImplementedError
 
     @abc.abstractmethod
